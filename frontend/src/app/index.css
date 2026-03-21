@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+    --bg-main: #171616;
+    --bg-sidebar: #1a1a1a;
+    --bg-card: #1e1e1e;
+    --border: #252525;
+    --accent: #F95C4B;
+    --text-main: #e8e8e8;
+    --text-muted: #888888;
+    --text-hint: #444444;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+}
+
+.messages::-webkit-scrollbar {
+    display: none;
+}
