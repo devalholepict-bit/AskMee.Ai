@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx nodemon server.js"
+    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+    "dev": "npx nodemon backend/server.js",
+    "start": "npx nodemon backend/server.js"
   },
   "keywords": [],
   "author": "",

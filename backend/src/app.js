@@ -4,8 +4,12 @@ import authRouter from "./routes/auth.routes.js";
 import chatRouter from "./routes/chat.routes.js";
 import morgan from "morgan";
 import cors from "cors";
+import path from "path";
 
 const app = express();
+
+const __dirname = path.resolve();
+
 
 // Middleware
 app.use(express.json());
@@ -25,11 +29,20 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // Health check
-app.get("/", (req, res) => {
-    res.json({ message: "Server is running" });
-});
+// app.get("/", (req, res) => {
+//     res.json({ message: "Server is running" });
+// });
 
 app.use("/api/auth", authRouter);
 app.use("/api/chats", chatRouter);
+
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
+app.use((req, res) => {
+  res.sendFile(
+    path.resolve(__dirname, "frontend", "dist", "index.html")
+  );
+});
+
+
 
 export default app;
