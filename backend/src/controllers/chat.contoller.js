@@ -5,7 +5,13 @@ import messageModel from "../models/message.model.js";
 
 export async function sendMessage(req, res) {
     try {
-        const { message, chat: chatFromBody, chatId: chatIdFromBody, isWebSearch = false } = req.body;
+        const { 
+            message, 
+            chat: chatFromBody, 
+            chatId: chatIdFromBody, 
+            isWebSearch = false,
+            image = null
+        } = req.body;
         const providedChatId = chatIdFromBody || chatFromBody;
 
         if (!message || typeof message !== "string" || !message.trim()) {
@@ -50,7 +56,7 @@ export async function sendMessage(req, res) {
 
         let result;
         try {
-            result = await generateResponse(messages, isWebSearch);
+            result = await generateResponse(messages, isWebSearch, image);
         } catch (aiErr) {
             console.error("AI service error:", aiErr);
 

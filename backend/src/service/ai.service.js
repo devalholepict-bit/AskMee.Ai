@@ -16,6 +16,11 @@ const mistralModel = new ChatMistralAI({
     apiKey: process.env.MISTRAL_API_KEY
 })
 
+const pixtralModel = new ChatMistralAI({
+    model: "pixtral-12b-2409",
+    apiKey: process.env.MISTRAL_API_KEY
+})
+
 const searchInternetTool = tool(
     searchInternet,
     {
@@ -41,7 +46,37 @@ const agent = createReactAgent({
 /**
  * Non-streaming response (kept for REST endpoint backward compatibility)
  */
-export async function generateResponse(messages, isWebSearch = false) {
+export async function generateResponse(messages, isWebSearch = false, image = null) {
+    if (image) {
+        // Use Pixtral for vision — ignore web search when image present
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '')
+        const mimeType = image.match(/data:(image\/\w+);base64/)?.[1] || 'image/jpeg'
+        
+        // Get last user message as the text prompt
+        const lastMessage = messages[messages.length - 1]
+        const textPrompt = typeof lastMessage === 'string' 
+          ? lastMessage 
+          : lastMessage?.content || 'What do you see in this image?'
+        
+        const visionMessage = new HumanMessage({
+          content: [
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:${mimeType};base64,${base64Data}`
+              }
+            },
+            {
+              type: "text",
+              text: textPrompt
+            }
+          ]
+        })
+        
+        const response = await pixtralModel.invoke([visionMessage])
+        return response.content
+    }
+
     if (isWebSearch) {
         const response = await agent.invoke({
             messages: [
@@ -74,7 +109,7 @@ export async function generateResponse(messages, isWebSearch = false) {
  * Streaming response — calls onToken(string) for each text token as it arrives.
  * Returns the full accumulated text when done.
  */
-export async function generateResponseStream(messages, onToken, isWebSearch = false) {
+export async function generateResponseStream(messages, onToken, isWebSearch = false, image = null) {
     const formattedMessages = [
         new SystemMessage(SYSTEM_PROMPT),
         ...(messages.map(msg => {
@@ -87,6 +122,35 @@ export async function generateResponseStream(messages, onToken, isWebSearch = fa
     ];
 
     let fullText = "";
+
+    if (image) {
+        const base64Data = image.replace(/^data:image\/\w+;base64,/, '')
+        const mimeType = image.match(/data:(image\/\w+);base64/)?.[1] || 'image/jpeg'
+        const lastMessage = messages[messages.length - 1]
+        const textPrompt = typeof lastMessage === 'string'
+          ? lastMessage
+          : lastMessage?.content || 'What do you see in this image?'
+
+        const visionMessage = new HumanMessage({
+          content: [
+            {
+              type: "image_url",
+              image_url: { url: `data:${mimeType};base64,${base64Data}` }
+            },
+            { type: "text", text: textPrompt }
+          ]
+        })
+
+        // Stream pixtral response token by token
+        const stream = await pixtralModel.stream([visionMessage])
+        for await (const chunk of stream) {
+          if (chunk.content) {
+            fullText += chunk.content;
+            onToken(chunk.content);
+          }
+        }
+        return fullText;
+    }
 
     if (isWebSearch) {
         const eventStream = agent.streamEvents(

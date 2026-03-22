@@ -1,8 +1,8 @@
 import api from '../../../app/lib/api.js';
 
 
-export const sendMessage = async ({ message, chatId, isWebSearch }) => {
-    const response = await api.post("/api/chats/message", { message, chatId, isWebSearch })
+export const sendMessage = async ({ message, chatId, isWebSearch, image }) => {
+    const response = await api.post("/api/chats/message", { message, chatId, isWebSearch, image })
     return response.data
 }
 

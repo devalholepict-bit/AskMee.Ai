@@ -347,6 +347,10 @@ const cleanTitle = (title) => {
 }
 
 const Dashboard = () => {
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const fileInputRef = useRef(null)
+
   const chat = useChat()
   const { handleLogout, handleUpdateUsername } = useAuth()
   const navigate = useNavigate()
@@ -411,6 +415,25 @@ const Dashboard = () => {
   // Web Search toggle state
   const [isWebSearch, setIsWebSearch] = useState(false)
 
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    
+    // Max 5MB check
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be under 5MB')
+      return
+    }
+    
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const base64 = e.target.result // "data:image/jpeg;base64,..."
+      setSelectedImage(base64)
+      setImagePreview(base64)
+    }
+    reader.readAsDataURL(file)
+  }
+
   // Current Model Selector state
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false)
   const models = ['AskMee Pro', 'AskMee Fast', 'AskMee Mini']
@@ -446,8 +469,15 @@ const Dashboard = () => {
     event?.preventDefault?.()
     const trimmedMessage = chatInput.trim()
     if (!trimmedMessage || isLoading) return
-    chat.handleSendMessage({ message: trimmedMessage, chatId: currentChatId, isWebSearch })
+    chat.handleSendMessage({ 
+      message: trimmedMessage, 
+      chatId: currentChatId,
+      isWebSearch: isWebSearch,
+      image: selectedImage
+    })
     setChatInput('')
+    setSelectedImage(null)
+    setImagePreview(null)
   }
   
   const handleKeyDown = (e) => {
@@ -519,6 +549,37 @@ const Dashboard = () => {
         onSubmit={handleSubmitMessage} 
         className={`relative flex flex-col w-full rounded-[16px] border-[1.5px] border-[#2e2e2e] bg-[var(--bg-card)] transition-colors duration-150 focus-within:border-[var(--accent)]`}
       >
+        <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageSelect} style={{ display: 'none' }} />
+        
+        {imagePreview && (
+          <div className="px-4 pt-4 pb-1">
+            <div className="relative inline-block border border-[#333] rounded-lg p-1 bg-[#1a1a1a]">
+              <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-md" />
+              <button 
+                type="button"
+                onClick={() => { setSelectedImage(null); setImagePreview(null) }}
+                style={{
+                  position: 'absolute',
+                  top: '-6px',
+                  right: '-6px',
+                  background: '#F95C4B',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '18px',
+                  height: '18px',
+                  color: '#fff',
+                  fontSize: '11px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  lineHeight: 1
+                }}
+              >✕</button>
+            </div>
+          </div>
+        )}
+
         {/* Top: AutoGrow Textarea Row */}
         <div className="flex w-full min-h-[52px]">
           <div className="pl-3.5 pt-[14px] shrink-0">
@@ -550,7 +611,11 @@ const Dashboard = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                 <span className="hidden sm:inline">Web Search {isWebSearch && <span className="ml-1 text-[9px] px-1 py-0.5 rounded bg-[var(--accent)] text-white">ON</span>}</span>
               </button>
-              <button type="button" className="flex items-center gap-1 text-[12px] font-medium px-2 py-1.5 rounded-full text-[var(--text-muted)] hover:text-white transition hover:bg-[rgba(255,255,255,0.05)]">
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current.click()}
+                className={`flex items-center gap-1 text-[12px] font-medium px-2 py-1.5 rounded-full transition ${selectedImage ? 'border border-[#F95C4B] text-[#F95C4B] bg-[rgba(249,92,75,0.15)]' : 'text-[#666] bg-transparent hover:text-white hover:bg-[rgba(255,255,255,0.05)]'}`}
+              >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                 <span className="hidden sm:inline">Attach</span>
               </button>

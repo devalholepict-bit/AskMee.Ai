@@ -24,11 +24,11 @@ export const getSocket = () => {
     return socket
 }
 
-export const emitSendMessage = ({ chatId, message, isWebSearch }) => {
+export const emitSendMessage = ({ chatId, message, isWebSearch, image = null }) => {
     if (!socket?.connected) {
         console.error("Socket not connected")
         return false
     }
-    socket.emit("send_message", { chatId, message, isWebSearch })
+    socket.emit("send_message", { chatId, message, isWebSearch, image })
     return true
 }

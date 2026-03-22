@@ -54,7 +54,8 @@ export const useChat = () => {
     /**
      * Send a message via Socket.IO (supports streaming)
      */
-    function handleSendMessage({ message, chatId, isWebSearch = false }) {
+    function handleSendMessage(payload) {
+        const { message, chatId, isWebSearch = false, image = null } = payload
         dispatch(setError(null))
 
         // Immediately show the user message in UI
@@ -66,11 +67,14 @@ export const useChat = () => {
         dispatch(startStreaming({ chatId: chatId || "__pending__" }))
 
         // Emit via socket
-        const sent = emitSendMessage({ chatId, message, isWebSearch })
+        const sent = emitSendMessage({ chatId, message, isWebSearch, image })
         if (!sent) {
             dispatch(finishStreaming())
             dispatch(setError("Not connected to server. Please refresh the page."))
         }
+
+        // Pass to API:
+        sendMessage({ message, chatId, isWebSearch, image }).catch(err => console.error(err))
     }
 
 
