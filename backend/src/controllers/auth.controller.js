@@ -28,40 +28,45 @@ export async function register(req, res) {
 const baseUrl = process.env.BASE_URL || 'http://localhost:3000'
 const verifyLink = `${baseUrl}/api/auth/verify-email?token=${EmailverificationToken}`
 
-await sendEmail({
-  to: email,
-  subject: "Verify your email - AskMee.AI",
-  html: `
-    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-      <h2>Welcome to AskMee.AI 🚀</h2>
-      
-      <p>Hi ${username},</p>
-      
-      <p>Thanks for signing up. Please confirm your email address to activate your account.</p>
-      
-      <p>
-        <a 
-          href="${verifyLink}" 
-          style="
-            display:inline-block;
-            padding:10px 18px;
-            background-color:#F95C4B;
-            color:#ffffff;
-            text-decoration:none;
-            border-radius:6px;
-            font-weight:bold;
-          "
-        >
-          Verify Email
-        </a>
-      </p>
+try {
+  await sendEmail({
+    to: email,
+    subject: "Verify your email - AskMee.AI",
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2>Welcome to AskMee.AI 🚀</h2>
+        
+        <p>Hi ${username},</p>
+        
+        <p>Thanks for signing up. Please confirm your email address to activate your account.</p>
+        
+        <p>
+          <a 
+            href="${verifyLink}" 
+            style="
+              display:inline-block;
+              padding:10px 18px;
+              background-color:#F95C4B;
+              color:#ffffff;
+              text-decoration:none;
+              border-radius:6px;
+              font-weight:bold;
+            "
+          >
+            Verify Email
+          </a>
+        </p>
 
-      <p>If you didn’t create this account, you can safely ignore this email.</p>
+        <p>If you didn’t create this account, you can safely ignore this email.</p>
 
-      <p>Thanks,<br/>The AskMee.AI Team</p>
-    </div>
-  `
-});
+        <p>Thanks,<br/>The AskMee.AI Team</p>
+      </div>
+    `
+  });
+} catch (emailErr) {
+  console.error('Email failed:', emailErr.message)
+  // Don't throw - user is still registered
+}
 
     res.status(201).json({
         message: "User registered successfully",
