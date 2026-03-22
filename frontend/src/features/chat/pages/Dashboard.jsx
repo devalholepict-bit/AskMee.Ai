@@ -333,6 +333,19 @@ const AutoGrowTextarea = ({ value, onChange, onKeyDown, disabled, placeholder })
   )
 }
 
+const cleanTitle = (title) => {
+  if (!title) return 'New Chat'
+  return title
+    .replace(/\*\*/g, '')
+    .replace(/\*/g, '')
+    .replace(/\_\_/g, '')
+    .replace(/\_/g, '')
+    .replace(/`/g, '')
+    .replace(/^#+\s*/g, '')
+    .replace(/"/g, '')
+    .trim()
+}
+
 const Dashboard = () => {
   const chat = useChat()
   const { handleLogout, handleUpdateUsername } = useAuth()
@@ -433,7 +446,7 @@ const Dashboard = () => {
     event?.preventDefault?.()
     const trimmedMessage = chatInput.trim()
     if (!trimmedMessage || isLoading) return
-    chat.handleSendMessage({ message: trimmedMessage, chatId: currentChatId })
+    chat.handleSendMessage({ message: trimmedMessage, chatId: currentChatId, isWebSearch })
     setChatInput('')
   }
   
@@ -532,10 +545,10 @@ const Dashboard = () => {
              <button 
                 type="button"
                 onClick={() => setIsWebSearch(!isWebSearch)}
-                className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors px-2 py-1.5 rounded-full ${isWebSearch ? 'text-[var(--accent)] bg-[rgba(249,92,75,0.1)]' : 'text-[var(--text-muted)] hover:text-white hover:bg-[rgba(255,255,255,0.05)]'}`}
+                className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors px-2 py-1.5 rounded-full ${isWebSearch ? 'text-[#F95C4B] bg-[rgba(249,92,75,0.15)] border border-[#F95C4B]' : 'text-[#666] bg-transparent border border-[#333] hover:text-white hover:bg-[rgba(255,255,255,0.05)]'}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                <span className="hidden sm:inline">Web Search</span>
+                <span className="hidden sm:inline">Web Search {isWebSearch && <span className="ml-1 text-[9px] px-1 py-0.5 rounded bg-[var(--accent)] text-white">ON</span>}</span>
               </button>
               <button type="button" className="flex items-center gap-1 text-[12px] font-medium px-2 py-1.5 rounded-full text-[var(--text-muted)] hover:text-white transition hover:bg-[rgba(255,255,255,0.05)]">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
@@ -709,7 +722,7 @@ const Dashboard = () => {
                       }`}
                     onClick={() => openChat(c.id)}
                   >
-                    <span className='truncate pr-6 font-medium flex-1'>{c.title}</span>
+                    <span className='truncate pr-6 font-medium flex-1'>{cleanTitle(c.title)}</span>
                     <button
                       type='button'
                       onClick={(e) => { e.stopPropagation(); chat.handleDeleteChat(c.id) }}
@@ -800,7 +813,7 @@ const Dashboard = () => {
                 <div className="flex items-center w-full max-w-[60%]">
                   {renderToggleButton()}
                   <div className="truncate text-[14px] text-[#ccc] font-medium ml-1">
-                    {activeChatData?.title || 'New Chat'}
+                    {cleanTitle(activeChatData?.title)}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

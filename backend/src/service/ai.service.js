@@ -41,9 +41,22 @@ const agent = createReactAgent({
 /**
  * Non-streaming response (kept for REST endpoint backward compatibility)
  */
-export async function generateResponse(messages) {
-    const response = await agent.invoke({
-        messages: [
+export async function generateResponse(messages, isWebSearch = false) {
+    if (isWebSearch) {
+        const response = await agent.invoke({
+            messages: [
+                new SystemMessage(SYSTEM_PROMPT),
+                ...(messages.map(msg => {
+                    if (msg.role == "user") {
+                        return new HumanMessage(msg.content)
+                    } else if (msg.role == "ai") {
+                        return new AIMessage(msg.content)
+                    }
+                })) ]
+        });
+        return response.messages[ response.messages.length - 1 ].text;
+    } else {
+        const response = await mistralModel.invoke([
             new SystemMessage(SYSTEM_PROMPT),
             ...(messages.map(msg => {
                 if (msg.role == "user") {
@@ -51,17 +64,17 @@ export async function generateResponse(messages) {
                 } else if (msg.role == "ai") {
                     return new AIMessage(msg.content)
                 }
-            })) ]
-    });
-
-    return response.messages[ response.messages.length - 1 ].text;
+            }))
+        ]);
+        return response.content;
+    }
 }
 
 /**
  * Streaming response — calls onToken(string) for each text token as it arrives.
  * Returns the full accumulated text when done.
  */
-export async function generateResponseStream(messages, onToken) {
+export async function generateResponseStream(messages, onToken, isWebSearch = false) {
     const formattedMessages = [
         new SystemMessage(SYSTEM_PROMPT),
         ...(messages.map(msg => {
@@ -75,15 +88,25 @@ export async function generateResponseStream(messages, onToken) {
 
     let fullText = "";
 
-    const eventStream = agent.streamEvents(
-        { messages: formattedMessages },
-        { version: "v2" }
-    );
+    if (isWebSearch) {
+        const eventStream = agent.streamEvents(
+            { messages: formattedMessages },
+            { version: "v2" }
+        );
 
-    for await (const event of eventStream) {
-        // on_chat_model_stream fires for each LLM token
-        if (event.event === "on_chat_model_stream") {
-            const chunk = event.data?.chunk;
+        for await (const event of eventStream) {
+            // on_chat_model_stream fires for each LLM token
+            if (event.event === "on_chat_model_stream") {
+                const chunk = event.data?.chunk;
+                if (chunk && chunk.content && typeof chunk.content === "string") {
+                    fullText += chunk.content;
+                    onToken(chunk.content);
+                }
+            }
+        }
+    } else {
+        const stream = await mistralModel.stream(formattedMessages);
+        for await (const chunk of stream) {
             if (chunk && chunk.content && typeof chunk.content === "string") {
                 fullText += chunk.content;
                 onToken(chunk.content);
@@ -100,7 +123,11 @@ export async function generateChatTitle(message) {
         new SystemMessage(`
             You are a helpful assistant that generates concise and descriptive titles for chat conversations.
             
-            User will provide you with the first message of a chat conversation, and you will generate a title that captures the essence of the conversation in 2-4 words. The title should be clear, relevant, and engaging, giving users a quick understanding of the chat's topic.    
+            Generate a short title of 2-4 words for this chat.
+            Return ONLY the plain title text.
+            Do NOT use markdown, asterisks, quotes, bold, 
+            italics, or any special characters.
+            Just plain words. Example: Understanding Artificial Intelligence
         `),
         new HumanMessage(`
             Generate a title for a chat conversation based on the following first message:
@@ -108,6 +135,19 @@ export async function generateChatTitle(message) {
             `)
     ])
 
-    return response.text;
+    let title = response.content || response.text || response;
+    // Strip all markdown symbols as a safety net
+    if (typeof title === 'string') {
+        title = title
+            .replace(/\*\*/g, '')   // remove bold **
+            .replace(/\*/g, '')     // remove italic *
+            .replace(/\_\_/g, '')   // remove bold __
+            .replace(/\_/g, '')     // remove italic _
+            .replace(/`/g, '')      // remove code `
+            .replace(/^#+\s*/g, '') // remove headings #
+            .replace(/"/g, '')      // remove quotes
+            .trim();
+    }
 
+    return title;
 }

@@ -40,7 +40,7 @@ export function initSocket(httpServer) {
         console.log(`User connected: ${socket.id} (userId: ${socket.user.id})`);
 
         // ── Handle send_message ──
-        socket.on("send_message", async ({ chatId, message }) => {
+        socket.on("send_message", async ({ chatId, message, isWebSearch = false }) => {
             try {
                 // Validate
                 if (!message || typeof message !== "string" || !message.trim()) {
@@ -81,7 +81,7 @@ export function initSocket(httpServer) {
                 // Stream the AI response token by token
                 const fullText = await generateResponseStream(messages, (token) => {
                     socket.emit("message_chunk", { chatId: activeChatId, token });
-                });
+                }, isWebSearch);
 
                 // Save the complete AI message
                 const aiMessage = await messageModel.create({
