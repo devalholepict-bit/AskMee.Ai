@@ -5,7 +5,7 @@ let socket = null;
 export const initializeSocketConnection = () => {
     if (socket?.connected) return socket;
 
-    socket = io("http://localhost:3000", {
+    socket = io("https://askmee-ai.onrender.com", {
         withCredentials: true,
     })
 

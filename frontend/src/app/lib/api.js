@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     // In Vite, environment variables are exposed via import.meta.env
-    baseURL: import.meta.env.VITE_BASE_URL || "http://localhost:3000",
+    baseURL: import.meta.env.VITE_BASE_URL || "https://askmee-ai.onrender.com",
     withCredentials: true,
 });
 
