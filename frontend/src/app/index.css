@@ -1,19 +1,41 @@
 @import "tailwindcss";
 
+/* DEFAULT = DARK MODE */
 :root {
-    --bg-main: #171616;
-    --bg-sidebar: #1a1a1a;
-    --bg-card: #1e1e1e;
-    --border: #252525;
-    --accent: #F95C4B;
-    --text-main: #e8e8e8;
-    --text-muted: #888888;
-    --text-hint: #444444;
+  --bg-main:       #171616;
+  --bg-sidebar:    #1a1a1a;
+  --bg-card:       #1e1e1e;
+  --bg-input:      #111111;
+  --border-color:  #252525;
+  --border-input:  #2e2e2e;
+  --text-main:     #e8e8e8;
+  --text-muted:    #888888;
+  --text-hint:     #444444;
+  --accent:        #F95C4B;
+  --accent-hover:  #e04a39;
+  --shadow:        rgba(0,0,0,0.3);
+}
+
+/* LIGHT MODE */
+[data-theme="light"] {
+  --bg-main:       #F5F5F0;
+  --bg-sidebar:    #FFFFFF;
+  --bg-card:       #FFFFFF;
+  --bg-input:      #F0EFEA;
+  --border-color:  #E0DDD6;
+  --border-input:  #D8D5CE;
+  --text-main:     #1A1A1A;
+  --text-muted:    #666666;
+  --text-hint:     #999999;
+  --accent:        #F95C4B;
+  --accent-hover:  #e04a39;
+  --shadow:        rgba(0,0,0,0.08);
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
+  background: var(--bg-main);
+  color: var(--text-main);
+  transition: background 200ms ease, color 200ms ease;
 }
 
 .messages::-webkit-scrollbar {

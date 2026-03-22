@@ -6,6 +6,8 @@ import { useAuth } from '../../auth/hook/useAuth'
 import { useNavigate } from 'react-router'
 import { setError, setCurrentChatId } from '../chat.slice'
 import remarkGfm from 'remark-gfm'
+import ThemeToggle from '../../../app/components/ThemeToggle'
+import Logo from '../../../app/components/Logo'
 
 
 /* ── Toast notification component ── */
@@ -68,7 +70,7 @@ const ProfileDropdown = ({ username, onLogout, onOpenProfile }) => {
             {initials}
           </div>
           <div className='flex flex-col items-start min-w-0'>
-            <span className='truncate text-sm font-medium text-white/90 leading-tight'>{username}</span>
+            <span className='truncate text-sm font-medium text-[var(--text-main)] leading-tight'>{username}</span>
             <span className='text-[10px] text-[var(--text-muted)] leading-tight'>Pro Plan</span>
           </div>
         </div>
@@ -81,7 +83,7 @@ const ProfileDropdown = ({ username, onLogout, onOpenProfile }) => {
         <div className='absolute bottom-full left-0 mb-2 w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg-card)] shadow-xl shadow-black/40 py-1 z-50'>
           <button 
              onClick={() => { setOpen(false); onOpenProfile(); }}
-             className='flex w-full items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-main)] transition hover:bg-[#252525]'
+             className='flex w-full items-center gap-2.5 px-4 py-2 text-sm text-[var(--text-main)] transition hover:bg-[var(--border-color)]'
           >
             👤 My Profile
           </button>
@@ -89,7 +91,7 @@ const ProfileDropdown = ({ username, onLogout, onOpenProfile }) => {
           <div className='mx-3 my-1 border-t border-[var(--border)]'></div>
           <button
             onClick={() => { setOpen(false); onLogout() }}
-            className='flex w-full items-center gap-2.5 px-4 py-2 text-sm text-[#F95C4B] transition hover:bg-[#252525]'
+            className='flex w-full items-center gap-2.5 px-4 py-2 text-sm text-[var(--accent)] transition hover:bg-[var(--border-color)]'
           >
             🚪 Log Out
           </button>
@@ -133,21 +135,21 @@ const ProfileModal = ({ user, onClose, handleUpdateUsername }) => {
      <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
        {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg('')} />}
        <div className="relative w-full max-w-md rounded-2xl bg-[var(--bg-sidebar)] border border-[var(--border)] shadow-2xl p-6">
-         <button onClick={onClose} className="absolute top-4 right-4 text-[#888] hover:text-white transition">
+         <button onClick={onClose} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-main)] transition">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
          </button>
          
-         <h2 className="text-xl font-bold text-white mb-6">My Profile</h2>
+         <h2 className="text-xl font-bold text-[var(--text-main)] mb-6">My Profile</h2>
          
          <div className="flex flex-col items-center mb-6">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#F95C4B] text-xl font-bold text-white mb-3">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent)] text-xl font-bold text-white mb-3">
               {(user?.username || '??').slice(0, 2).toUpperCase()}
             </div>
          </div>
 
          <div className="space-y-4">
            <div>
-             <label className="block text-xs font-semibold text-[#888] uppercase tracking-wider mb-1">Username</label>
+             <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">Username</label>
              <div className="flex items-start gap-2">
                {isEditing ? (
                  <div className="flex-1">
@@ -155,7 +157,7 @@ const ProfileModal = ({ user, onClose, handleUpdateUsername }) => {
                      type="text" 
                      value={username} 
                      onChange={e => setUsername(e.target.value)} 
-                     className="w-full bg-[var(--bg-main)] border border-[var(--border)] rounded-lg px-3 py-2 text-white outline-none focus:border-[#F95C4B] transition-colors"
+                     className="w-full bg-[var(--bg-main)] border border-[var(--border)] rounded-lg px-3 py-2 text-[var(--text-main)] outline-none focus:border-[var(--accent)] transition-colors"
                      autoFocus
                    />
                    {error && <p className="text-red-400 text-xs mt-1.5">{error}</p>}
@@ -167,21 +169,21 @@ const ProfileModal = ({ user, onClose, handleUpdateUsername }) => {
                )}
 
                {!isEditing ? (
-                 <button onClick={() => setIsEditing(true)} className="p-2 text-[#888] hover:text-white transition rounded-lg hover:bg-white/5">
+                 <button onClick={() => setIsEditing(true)} className="p-2 text-[var(--text-muted)] hover:text-[var(--text-main)] transition rounded-lg hover:bg-white/5">
                    ✏️
                  </button>
                ) : (
                  <div className="flex gap-2">
-                   <button onClick={handleSave} disabled={isSaving} className="px-3 py-2 bg-[#F95C4B] text-white text-sm font-medium rounded-lg hover:brightness-110 disabled:opacity-50 transition">Save</button>
-                   <button onClick={() => { setIsEditing(false); setUsername(user?.username); setError(''); }} className="px-3 py-2 bg-[#333] text-white text-sm font-medium rounded-lg hover:bg-[#444] transition">Cancel</button>
+                   <button onClick={handleSave} disabled={isSaving} className="px-3 py-2 bg-[var(--accent)] text-white text-sm font-medium rounded-lg hover:brightness-110 disabled:opacity-50 transition">Save</button>
+                   <button onClick={() => { setIsEditing(false); setUsername(user?.username); setError(''); }} className="px-3 py-2 bg-[var(--border-input)] text-white text-sm font-medium rounded-lg hover:bg-[var(--text-hint)] transition">Cancel</button>
                  </div>
                )}
              </div>
            </div>
 
            <div>
-             <label className="block text-xs font-semibold text-[#888] uppercase tracking-wider mb-1">Email</label>
-             <div className="w-full bg-[var(--bg-main)] border border-transparent rounded-lg px-3 py-2 text-[#aaa] cursor-not-allowed opacity-70">
+             <label className="block text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-1">Email</label>
+             <div className="w-full bg-[var(--bg-main)] border border-transparent rounded-lg px-3 py-2 text-[var(--text-muted)] cursor-not-allowed opacity-70">
                {user?.email || 'N/A'}
              </div>
            </div>
@@ -235,12 +237,12 @@ const UsernameSetupModal = ({ user, handleUpdateUsername, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[rgba(0,0,0,0.85)] px-4">
-       <div className="relative w-full max-w-[400px] rounded-[16px] bg-[#1e1e1e] border border-[#2a2a2a] p-[36px] shadow-2xl flex flex-col items-center">
+       <div className="relative w-full max-w-[400px] rounded-[16px] bg-[var(--bg-card)] border border-[#2a2a2a] p-[36px] shadow-2xl flex flex-col items-center">
          
          <div className="text-[48px] leading-none mb-4">👋</div>
          
-         <h2 className="text-[22px] font-bold text-white mb-2 text-center">Welcome to AskMee.AI!</h2>
-         <p className="text-[14px] text-[#888] mb-8 text-center">Pick a username to get started</p>
+         <h2 className="text-[22px] font-bold text-[var(--text-main)] mb-2 text-center">Welcome to AskMee.AI!</h2>
+         <p className="text-[14px] text-[var(--text-muted)] mb-8 text-center">Pick a username to get started</p>
          
          <form onSubmit={handleSubmit} className="w-full">
            <div className="relative mb-2">
@@ -249,7 +251,7 @@ const UsernameSetupModal = ({ user, handleUpdateUsername, onSuccess }) => {
                value={username} 
                onChange={e => setUsername(e.target.value)} 
                placeholder="e.g. arjun_m or curious_dev"
-               className={`w-full bg-[var(--bg-main)] border ${error ? 'border-red-500/50 focus:border-red-500' : isValid ? 'border-green-500/50 focus:border-green-500' : 'border-[#333] focus:border-[#F95C4B]'} rounded-xl px-4 py-3 text-white outline-none transition-colors duration-200`}
+               className={`w-full bg-[var(--bg-main)] border ${error ? 'border-red-500/50 focus:border-red-500' : isValid ? 'border-green-500/50 focus:border-green-500' : 'border-[var(--border-color)] focus:border-[var(--accent)]'} rounded-xl px-4 py-3 text-[var(--text-main)] outline-none transition-colors duration-200`}
                autoFocus
              />
              {username.length > 0 && (
@@ -266,13 +268,13 @@ const UsernameSetupModal = ({ user, handleUpdateUsername, onSuccess }) => {
            {error ? (
               <p className="text-red-400 text-[11px] mb-6 min-h-[16px]">{error}</p>
            ) : (
-              <p className="text-[#555] text-[11px] mb-6 min-h-[16px]">3–20 chars · letters, numbers, _ only</p>
+              <p className="text-[var(--text-muted)] text-[11px] mb-6 min-h-[16px]">3–20 chars · letters, numbers, _ only</p>
            )}
 
            <button 
              type="submit" 
              disabled={!isValid || isSaving} 
-             className="w-full py-3 bg-[#F95C4B] text-white font-medium rounded-xl hover:brightness-110 disabled:opacity-40 transition"
+             className="w-full py-3 bg-[var(--accent)] text-white font-medium rounded-xl hover:brightness-110 disabled:opacity-40 transition"
            >
              {isSaving ? 'Saving...' : 'Continue →'}
            </button>
@@ -517,10 +519,10 @@ const Dashboard = () => {
       <button
         type="button"
         onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-        className="flex items-center gap-1.5 px-3 py-1 bg-[var(--bg-main)] sm:bg-[var(--bg-card)] rounded-full text-xs font-medium text-[var(--text-main)] hover:text-white transition group border border-transparent hover:border-[#2e2e2e]"
+        className="flex items-center gap-1.5 px-3 py-1 bg-[var(--bg-main)] sm:bg-[var(--bg-card)] rounded-full text-xs font-medium text-[var(--text-main)] hover:text-[var(--text-main)] transition group border border-transparent hover:border-[var(--border-input)]"
       >
         <span className="truncate max-w-[80px] sm:max-w-none">{selectedModel}</span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)] group-hover:text-white transition"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </button>
 
       {modelDropdownOpen && (
@@ -530,7 +532,7 @@ const Dashboard = () => {
               key={m}
               type="button"
               onClick={() => { setSelectedModel(m); setModelDropdownOpen(false) }}
-              className="w-full flex items-center justify-between px-4 py-2 text-sm text-[var(--text-main)] transition hover:bg-[#252525]"
+              className="w-full flex items-center justify-between px-4 py-2 text-sm text-[var(--text-main)] transition hover:bg-[var(--border-color)]"
             >
               <div className="flex items-center gap-2">
                 {selectedModel === m ? <div className="w-1.5 h-1.5 rounded-full bg-[var(--accent)]" /> : <div className="w-1.5 h-1.5" />}
@@ -547,13 +549,13 @@ const Dashboard = () => {
     <div className={`relative ${isWelcomeScreen ? 'w-full max-w-[620px]' : 'w-full max-w-[800px] mx-auto'}`}>
       <form 
         onSubmit={handleSubmitMessage} 
-        className={`relative flex flex-col w-full rounded-[16px] border-[1.5px] border-[#2e2e2e] bg-[var(--bg-card)] transition-colors duration-150 focus-within:border-[var(--accent)]`}
+        className={`relative flex flex-col w-full rounded-[16px] border-[1.5px] border-[var(--border-input)] bg-[var(--bg-card)] transition-colors duration-150 focus-within:border-[var(--accent)]`}
       >
         <input type="file" accept="image/*" ref={fileInputRef} onChange={handleImageSelect} style={{ display: 'none' }} />
         
         {imagePreview && (
           <div className="px-4 pt-4 pb-1">
-            <div className="relative inline-block border border-[#333] rounded-lg p-1 bg-[#1a1a1a]">
+            <div className="relative inline-block border border-[var(--border-color)] rounded-lg p-1 bg-[var(--bg-sidebar)]">
               <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-md" />
               <button 
                 type="button"
@@ -562,12 +564,12 @@ const Dashboard = () => {
                   position: 'absolute',
                   top: '-6px',
                   right: '-6px',
-                  background: '#F95C4B',
+                  background: 'var(--accent)',
                   border: 'none',
                   borderRadius: '50%',
                   width: '18px',
                   height: '18px',
-                  color: '#fff',
+                  color: 'var(--text-main)',
                   fontSize: '11px',
                   cursor: 'pointer',
                   display: 'flex',
@@ -606,7 +608,7 @@ const Dashboard = () => {
              <button 
                 type="button"
                 onClick={() => setIsWebSearch(!isWebSearch)}
-                className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors px-2 py-1.5 rounded-full ${isWebSearch ? 'text-[#F95C4B] bg-[rgba(249,92,75,0.15)] border border-[#F95C4B]' : 'text-[#666] bg-transparent border border-[#333] hover:text-white hover:bg-[rgba(255,255,255,0.05)]'}`}
+                className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors px-2 py-1.5 rounded-full ${isWebSearch ? 'text-[var(--accent)] bg-[rgba(249,92,75,0.15)] border border-[var(--accent)]' : 'text-[var(--text-muted)] bg-transparent border border-[var(--border-color)] hover:text-[var(--text-main)] hover:bg-[rgba(255,255,255,0.05)]'}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                 <span className="hidden sm:inline">Web Search {isWebSearch && <span className="ml-1 text-[9px] px-1 py-0.5 rounded bg-[var(--accent)] text-white">ON</span>}</span>
@@ -614,7 +616,7 @@ const Dashboard = () => {
               <button 
                 type="button" 
                 onClick={() => fileInputRef.current.click()}
-                className={`flex items-center gap-1 text-[12px] font-medium px-2 py-1.5 rounded-full transition ${selectedImage ? 'border border-[#F95C4B] text-[#F95C4B] bg-[rgba(249,92,75,0.15)]' : 'text-[#666] bg-transparent hover:text-white hover:bg-[rgba(255,255,255,0.05)]'}`}
+                className={`flex items-center gap-1 text-[12px] font-medium px-2 py-1.5 rounded-full transition ${selectedImage ? 'border border-[var(--accent)] text-[var(--accent)] bg-[rgba(249,92,75,0.15)]' : 'text-[var(--text-muted)] bg-transparent hover:text-[var(--text-main)] hover:bg-[rgba(255,255,255,0.05)]'}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
                 <span className="hidden sm:inline">Attach</span>
@@ -639,7 +641,7 @@ const Dashboard = () => {
       </form>
       {!isWelcomeScreen && (
          <div className="text-center mt-2.5">
-           <span className="text-[11px] text-[#555] hidden sm:block">AskMee.AI searches the live web · Verify important info</span>
+           <span className="text-[11px] text-[var(--text-muted)] hidden sm:block">AskMee.AI searches the live web · Verify important info</span>
          </div>
       )}
     </div>
@@ -654,13 +656,13 @@ const Dashboard = () => {
         cursor: 'pointer',
         padding: '6px 8px',
         borderRadius: '6px',
-        color: '#888',
+        color: 'var(--text-muted)',
         display: 'flex',
         alignItems: 'center',
         marginRight: '8px',
       }}
       title={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
-      className="hover:text-[#F95C4B] transition-colors"
+      className="hover:text-[var(--accent)] transition-colors"
     >
       {sidebarOpen ? (
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><path d="M14 15l-3-3 3-3"></path></svg>
@@ -708,7 +710,7 @@ const Dashboard = () => {
             transition: isSidebarDragging ? 'none' : 'all 200ms ease',
             ...(sidebarOpen && isMobile ? { position: 'fixed', zIndex: 50, height: '100%' } : {})
           }}
-          className='relative h-full shrink-0 border-r border-[#252525] bg-[#1a1a1a] flex-col flex'
+          className='relative h-full shrink-0 border-r border-[var(--border-color)] bg-[var(--bg-sidebar)] flex-col flex'
         >
           {/* Drag Handle */}
           {sidebarOpen && (
@@ -722,12 +724,12 @@ const Dashboard = () => {
             {/* Top Section */}
             <div className='flex items-center justify-between mb-5 px-1 shrink-0'>
               <h1 className='text-[20px] font-bold tracking-tight truncate'>
-                <span className="text-white">AskMee</span><span className='text-[var(--accent)]'>.AI</span>
+                <Logo size="sm" showText={true} />
               </h1>
               <button 
                 onClick={() => setSidebarOpen(false)} 
                 style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px' }}
-                className='text-[#444] hover:text-[#888] transition shrink-0 ml-2' 
+                className='text-[var(--text-hint)] hover:text-[var(--text-muted)] transition shrink-0 ml-2' 
                 title="Close sidebar"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><path d="M14 15l-3-3 3-3"></path></svg>
@@ -737,7 +739,7 @@ const Dashboard = () => {
             {/* New Chat Button */}
             <button
               onClick={handleNewChat}
-              className='group w-full flex items-center justify-center gap-2 rounded-lg border border-[#2e2e2e] bg-transparent px-3 py-2 text-sm font-medium text-[var(--text-main)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-white mb-5 shrink-0'
+              className='group w-full flex items-center justify-center gap-2 rounded-lg border border-[var(--border-input)] bg-transparent px-3 py-2 text-sm font-medium text-[var(--text-main)] transition-colors duration-150 hover:border-[var(--accent)] hover:text-[var(--text-main)] mb-5 shrink-0'
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--text-muted)] group-hover:text-[var(--accent)] transition-colors shrink-0">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -761,12 +763,12 @@ const Dashboard = () => {
                   <button 
                     key={item} 
                     onClick={handleClick} 
-                    className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${isActive ? 'bg-[rgba(249,92,75,0.10)] text-[var(--accent)] border-l-[2px] border-[var(--accent)] rounded-l-none font-medium' : 'text-[#666] hover:bg-[#252525] hover:text-[#ccc] border-l-[2px] border-transparent font-normal'}`}
+                    className={`group flex w-full items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors duration-150 ${isActive ? 'bg-[rgba(249,92,75,0.10)] text-[var(--accent)] border-l-[2px] border-[var(--accent)] rounded-l-none font-medium' : 'text-[var(--text-muted)] hover:bg-[var(--border-color)] hover:text-[var(--text-main)] border-l-[2px] border-transparent font-normal'}`}
                   >
                     <div className="shrink-0"><NavIcon name={item} /></div>
                     <span className="truncate text-left flex-1">{item}</span>
                     {isHistory && (
-                       <svg className={`shrink-0 text-[#555] group-hover:text-[#888] transition-transform duration-200 ${showHistory ? '' : '-rotate-90'}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                       <svg className={`shrink-0 text-[var(--text-muted)] group-hover:text-[var(--text-muted)] transition-transform duration-200 ${showHistory ? '' : '-rotate-90'}`} xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     )}
                   </button>
                 )
@@ -775,15 +777,15 @@ const Dashboard = () => {
 
             {/* Chat History */}
             <div className={`flex flex-col min-h-0 overflow-hidden transition-[max-height] duration-200 ease-in-out ${showHistory ? 'max-h-[50vh] flex-1' : 'max-h-0'}`}>
-              <h3 className='text-[10px] font-semibold text-[#444] uppercase tracking-wider mb-2 px-3 shrink-0'>Recent</h3>
+              <h3 className='text-[10px] font-semibold text-[var(--text-hint)] uppercase tracking-wider mb-2 px-3 shrink-0'>Recent</h3>
               <div className='flex-1 overflow-y-auto space-y-0.5 pr-1 pb-2'>
                 {Object.values(chats).map((c) => (
                   <div
                     key={c.id}
                     className={`group relative flex w-full cursor-pointer items-center rounded-lg px-3 py-2 text-left text-sm transition-colors duration-150
                       ${currentChatId === c.id
-                        ? 'border-l-[2px] border-[var(--accent)] rounded-l-none bg-[rgba(255,255,255,0.03)] text-white'
-                        : 'border-l-[2px] border-transparent text-[#aaa] hover:bg-[#252525] hover:text-white'
+                        ? 'border-l-[2px] border-[var(--accent)] rounded-l-none bg-[var(--bg-input)] text-[var(--text-main)]'
+                        : 'border-l-[2px] border-transparent text-[var(--text-muted)] hover:bg-[var(--border-color)] hover:text-[var(--text-main)]'
                       }`}
                     onClick={() => openChat(c.id)}
                   >
@@ -791,7 +793,7 @@ const Dashboard = () => {
                     <button
                       type='button'
                       onClick={(e) => { e.stopPropagation(); chat.handleDeleteChat(c.id) }}
-                      className='absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[#666] opacity-0 transition hover:text-red-400 group-hover:opacity-100 bg-[#252525] hover:bg-[#333]'
+                      className='absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-[var(--text-muted)] opacity-0 transition hover:text-red-400 group-hover:opacity-100 bg-[var(--border-color)] hover:bg-[var(--border-input)]'
                       title='Delete chat'
                     >
                       <svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
@@ -806,6 +808,9 @@ const Dashboard = () => {
 
             {/* Bottom Profile Row */}
             <div className="mt-auto pt-2 bg-[var(--bg-sidebar)]">
+              <div className="px-2 pb-2">
+                <ThemeToggle />
+              </div>
               <ProfileDropdown 
                  username={user?.username || 'User'} 
                  onLogout={onLogout} 
@@ -834,12 +839,12 @@ const Dashboard = () => {
                 
                 {/* Greeting Text */}
                 <div className="mb-2">
-                  <p className="text-[16px] text-[#666]">Hello, I am</p>
+                  <p className="text-[16px] text-[var(--text-muted)]">Hello, I am</p>
                   <h2 className="text-[44px] font-bold leading-tight mt-1 mb-2">
-                    <span className="text-white">AskMee</span><span className="text-[var(--accent)]">.AI</span>
+                    <span className="text-[var(--text-main)]">AskMee</span><span className="text-[var(--accent)]">.AI</span>
                   </h2>
-                  <h3 className="text-[32px] font-semibold text-[#ddd] leading-tight mb-2">Do you need my guidance?</h3>
-                  <p className="text-[15px] text-[#555] mb-[32px]">More than just a search, it's answers you can trust.</p>
+                  <h3 className="text-[32px] font-semibold text-[var(--text-main)] leading-tight mb-2">Do you need my guidance?</h3>
+                  <p className="text-[15px] text-[var(--text-muted)] mb-[32px]">More than just a search, it's answers you can trust.</p>
                 </div>
 
                 {/* Main Input */}
@@ -847,21 +852,21 @@ const Dashboard = () => {
 
                 {/* Inspiration Cards */}
                 <div className="mt-[32px] mb-8 w-full max-w-[620px]">
-                  <h4 className="text-[15px] font-medium text-[#888] mb-4">Here's some inspiration for you</h4>
+                  <h4 className="text-[15px] font-medium text-[var(--text-muted)] mb-4">Here's some inspiration for you</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <button onClick={() => prefillText("Search the web for the latest advancements in AI agents")} className="text-left bg-[var(--bg-card)] border border-[var(--border)] rounded-[12px] p-4 transition-colors duration-150 hover:border-[var(--accent)] group min-w-[160px]">
                       <div className="text-[18px] mb-2">🌐</div>
-                      <h5 className="font-semibold text-white text-[15px] mb-1">Web Search</h5>
+                      <h5 className="font-semibold text-[var(--text-main)] text-[15px] mb-1">Web Search</h5>
                       <p className="text-[13px] text-[var(--text-muted)] leading-snug">Real-time internet results with citations</p>
                     </button>
                     <button onClick={() => prefillText("Give me a deep research analysis on quantum computing")} className="text-left bg-[var(--bg-card)] border border-[var(--border)] rounded-[12px] p-4 transition-colors duration-150 hover:border-[var(--accent)] group min-w-[160px]">
                       <div className="text-[18px] mb-2">🔬</div>
-                      <h5 className="font-semibold text-white text-[15px] mb-1">Deep Research</h5>
+                      <h5 className="font-semibold text-[var(--text-main)] text-[15px] mb-1">Deep Research</h5>
                       <p className="text-[13px] text-[var(--text-muted)] leading-snug">Multi-source comprehensive analysis</p>
                     </button>
                     <button onClick={() => prefillText("Can you help me draft an email proposing a new AI feature?")} className="text-left bg-[var(--bg-card)] border border-[var(--border)] rounded-[12px] p-4 transition-colors duration-150 hover:border-[var(--accent)] group min-w-[160px]">
                       <div className="text-[18px] mb-2">✍️</div>
-                      <h5 className="font-semibold text-white text-[15px] mb-1">AI Writing</h5>
+                      <h5 className="font-semibold text-[var(--text-main)] text-[15px] mb-1">AI Writing</h5>
                       <p className="text-[13px] text-[var(--text-muted)] leading-snug">Drafts, summaries, and rewrites</p>
                     </button>
                   </div>
@@ -874,17 +879,17 @@ const Dashboard = () => {
             <div className="flex flex-col h-full relative">
 
               {/* Top Bar (Sticky) */}
-              <header className="absolute top-0 left-0 z-10 w-full shrink-0 flex items-center justify-between px-6 h-[52px] bg-[rgba(23,22,22,0.9)] backdrop-blur-sm border-b border-[#222]">
+              <header className="absolute top-0 left-0 z-10 w-full shrink-0 flex items-center justify-between px-6 h-[52px] bg-[rgba(23,22,22,0.9)] backdrop-blur-sm border-b border-[var(--border-color)]">
                 <div className="flex items-center w-full max-w-[60%]">
                   {renderToggleButton()}
-                  <div className="truncate text-[14px] text-[#ccc] font-medium ml-1">
+                  <div className="truncate text-[14px] text-[var(--text-main)] font-medium ml-1">
                     {cleanTitle(activeChatData?.title)}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="hidden sm:block">
                     {/* Compact model view or hide entirely, kept from previous iteration */}
-                    <span className="text-xs text-[#666] border border-[#2e2e2e] px-2 py-1 rounded-full">{selectedModel}</span>
+                    <span className="text-xs text-[var(--text-muted)] border border-[var(--border-input)] px-2 py-1 rounded-full">{selectedModel}</span>
                   </div>
                   <button className="text-[var(--text-muted)] hover:text-[var(--accent)] transition">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
@@ -922,10 +927,10 @@ const Dashboard = () => {
                                 ul: ({ children }) => <ul className='mb-3 list-disc pl-5 space-y-1'>{children}</ul>,
                                 ol: ({ children }) => <ol className='mb-3 list-decimal pl-5 space-y-1'>{children}</ol>,
                                 code: ({ children }) => <code className='rounded bg-white/10 px-1 py-0.5 text-[#ff8f82] font-mono text-[13px]'>{children}</code>,
-                                pre: ({ children }) => <pre className='mb-3 overflow-x-auto rounded-xl bg-black/40 p-4 border border-[#333] font-mono text-[13px]'>{children}</pre>,
-                                h1: ({ children }) => <h1 className='text-xl font-bold mb-3 text-white'>{children}</h1>,
-                                h2: ({ children }) => <h2 className='text-lg font-bold mb-2 text-white mt-4'>{children}</h2>,
-                                h3: ({ children }) => <h3 className='text-base font-bold mb-2 text-white mt-3'>{children}</h3>,
+                                pre: ({ children }) => <pre className='mb-3 overflow-x-auto rounded-xl bg-black/40 p-4 border border-[var(--border-color)] font-mono text-[13px]'>{children}</pre>,
+                                h1: ({ children }) => <h1 className='text-xl font-bold mb-3 text-[var(--text-main)]'>{children}</h1>,
+                                h2: ({ children }) => <h2 className='text-lg font-bold mb-2 text-[var(--text-main)] mt-4'>{children}</h2>,
+                                h3: ({ children }) => <h3 className='text-base font-bold mb-2 text-[var(--text-main)] mt-3'>{children}</h3>,
                                 a: ({ children, href }) => <a href={href} target="_blank" rel="noopener noreferrer" className='text-[var(--accent)] hover:underline'>{children}</a>,
                                 li: ({ children }) => <li className='leading-relaxed'>{children}</li>
                               }}
@@ -936,8 +941,8 @@ const Dashboard = () => {
 
                             {/* Source tags placeholder */}
                             {message.content.length > 50 && (
-                              <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-[#333]">
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium bg-[var(--bg-main)] border border-[#333] rounded-full text-[#aaa] hover:border-[var(--accent)] hover:text-white cursor-pointer transition">
+                              <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-[var(--border-color)]">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-medium bg-[var(--bg-main)] border border-[var(--border-color)] rounded-full text-[var(--text-muted)] hover:border-[var(--accent)] hover:text-[var(--text-main)] cursor-pointer transition">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                                   Sources
                                 </span>
@@ -969,10 +974,10 @@ const Dashboard = () => {
                                 ul: ({ children }) => <ul className='mb-3 list-disc pl-5 space-y-1'>{children}</ul>,
                                 ol: ({ children }) => <ol className='mb-3 list-decimal pl-5 space-y-1'>{children}</ol>,
                                 code: ({ children }) => <code className='rounded bg-white/10 px-1 py-0.5 text-[#ff8f82] font-mono text-[13px]'>{children}</code>,
-                                pre: ({ children }) => <pre className='mb-3 overflow-x-auto rounded-xl bg-black/40 p-4 border border-[#333] font-mono text-[13px]'>{children}</pre>,
-                                h1: ({ children }) => <h1 className='text-xl font-bold mb-3 text-white'>{children}</h1>,
-                                h2: ({ children }) => <h2 className='text-lg font-bold mb-2 text-white mt-4'>{children}</h2>,
-                                h3: ({ children }) => <h3 className='text-base font-bold mb-2 text-white mt-3'>{children}</h3>,
+                                pre: ({ children }) => <pre className='mb-3 overflow-x-auto rounded-xl bg-black/40 p-4 border border-[var(--border-color)] font-mono text-[13px]'>{children}</pre>,
+                                h1: ({ children }) => <h1 className='text-xl font-bold mb-3 text-[var(--text-main)]'>{children}</h1>,
+                                h2: ({ children }) => <h2 className='text-lg font-bold mb-2 text-[var(--text-main)] mt-4'>{children}</h2>,
+                                h3: ({ children }) => <h3 className='text-base font-bold mb-2 text-[var(--text-main)] mt-3'>{children}</h3>,
                                 li: ({ children }) => <li className='leading-relaxed'>{children}</li>
                               }}
                               remarkPlugins={[remarkGfm]}
@@ -991,7 +996,7 @@ const Dashboard = () => {
               </div>
 
               {/* Bottom Input Area (Sticky) */}
-              <footer className="absolute bottom-0 left-0 w-full bg-[var(--bg-main)] border-t border-[#222] px-[24px] pb-[20px] pt-[16px]">
+              <footer className="absolute bottom-0 left-0 w-full bg-[var(--bg-main)] border-t border-[var(--border-color)] px-[24px] pb-[20px] pt-[16px]">
                 {renderInputBar(false)}
               </footer>
 

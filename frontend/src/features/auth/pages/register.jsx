@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../hook/useAuth'
 import { useSelector } from 'react-redux'
+import Logo from '../../../app/components/Logo'
+import { useTheme } from '../../../app/context/ThemeContext'
 
 const Register = () => {
     const [ isFlipped, setIsFlipped ] = useState(true)
@@ -15,6 +17,7 @@ const Register = () => {
     const error = useSelector(state => state.auth.error)
     const { handleRegister, handleLogin } = useAuth()
     const navigate = useNavigate()
+    const { theme } = useTheme()
 
     const submitForm = async (event) => {
         event.preventDefault()
@@ -87,7 +90,7 @@ const Register = () => {
                     
                     {/* Log In */}
                     <div className="backface-hidden absolute w-full h-full rounded-2xl bg-[#171616] shadow-[0_15px_35px_rgba(0,0,0,0.5)] p-10 flex flex-col justify-center">
-                        <h2 className="text-[#F95C4B] text-3xl font-bold mb-8 text-center uppercase tracking-wider">Log In</h2>
+                        <div className="mb-4 flex justify-center w-full"><Logo size="md" /></div>
                         <form onSubmit={submitLogin} className="space-y-6">
                             <div className="relative">
                                 <i className="uil uil-at absolute top-[14px] left-4 text-gray-400 text-xl"></i>
@@ -123,7 +126,7 @@ const Register = () => {
 
                     {/* Sign Up */}
                     <div className="backface-hidden rotate-y-180 absolute w-full h-full rounded-2xl bg-[#171616] shadow-[0_15px_35px_rgba(0,0,0,0.5)] p-10 flex flex-col justify-center">
-                        <h2 className="text-[#F95C4B] text-3xl font-bold mb-8 text-center uppercase tracking-wider">Sign Up</h2>
+                        <div className="mb-4 flex justify-center w-full"><Logo size="md" /></div>
                         <form onSubmit={submitForm} className="space-y-6">
                             <div className="relative">
                                 <i className="uil uil-user absolute top-[14px] left-4 text-gray-400 text-xl"></i>
