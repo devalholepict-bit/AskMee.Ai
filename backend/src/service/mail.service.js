@@ -27,6 +27,12 @@ const createTransporter = async () => {
   return { gmail, accessToken }
 }
 
+
+// const transporter = await createTransporter()
+// transporter.verify()
+//     .then(() => { console.log("Email transporter is ready to send emails"); })
+//     .catch((err) => { console.error("Email transporter verification failed:", err); });
+
 export const sendEmail = async ({ to, subject, html }) => {
   try {
     const { gmail } = await createTransporter()
