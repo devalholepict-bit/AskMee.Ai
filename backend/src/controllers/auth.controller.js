@@ -25,7 +25,7 @@ export async function register(req, res) {
         email: user.email,
     }, process.env.JWT_SECRET)
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000'
+const baseUrl = process.env.BASE_URL || 'https://askmee-ai.onrender.com'
 const verifyLink = `${baseUrl}/api/auth/verify-email?token=${EmailverificationToken}`
 
 try {
